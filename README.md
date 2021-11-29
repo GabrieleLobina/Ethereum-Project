@@ -1,26 +1,40 @@
-# README #
+# Web scraping #
 
-## PROGETTO LOBINA-CHESSA ##
+### Obiettivi: ###
 
-### SMART CONTRACT WITH ETHERIUM ###
+* Estrazione dei link contenenti i codici dei contratti dalla pagina https://etherscan.io/contractsVerified
+* Ingresso nei suddetti link ed estrazione del codice che compone i contratti
+* Inserimento del codice in un file csv
 
-L' obiettivo di questo progetto è quello di effettuare una topic modeling sui testi 
-degli smart contract di ethereum in modo da comprendere in quali ambiti essi vengono utilizzati principalmente.   
-I contratti in questione dovranno essere estratti dal sito Etherscan.io, ripuliti e poi utilizzati in due 
-modelli di topic modeling, LDA (Latent Dirichlet Allocation) e NMF (Non-Negative Matrix Factorization).
+### Passi preliminari ###
 
+* Scaricare le varie librerie presenti nel file *requirements.txt*
+* Per effettuare l' accesso alle varie pagine web verrà utilizzato ***selenium***, il quale necessita di determinati 
+  driver.  
+      Il programma è predisposto per l' utilizzo o di Chrome oppure di Safari:  
+  - Per Chrome = **ChromeDriver** (ottenibile al seguente link:
+    https://chromedriver.chromium.org/downloads)
+  - Per Safari = non necessita di alcun driver, se non del settaggio delle impostazioni del browser descritto al seguente
+    link:
+    https://www.browserstack.com/guide/run-selenium-tests-on-safari-using-safaridriver
+    
+* Per utilizzare Safari: commentare il codice alle righe 20 e 63 poi decommentare alle righe 21 e 64
 
-#### L' ordine di esecuzione dei programmi è il seguente: ####
+#### N.B.: Accertarsi sempre di avere il driver compatibile con la versione del proprio browser 
 
-- Branch Web-scraping-e-Parsing: estrazione dei contratti dalla piattaforma Etherscan.io
-- Branch stopwords-cleaning: pulizia dei testi dei contratti e *Topic modeling*
+### Descrizione programma ###
 
+Scraping.py contiene due classi: **Page** e **ObtainContracts**.
 
-#### Nella cartella *Deposito_contratti* del branch stopwords-cleaning saranno proposti tre file: #####
-* contracts.csv (contiene circa 5000 contratti)
-* cleaned_dataset_lemma.csv (pulizia + lemmatization di contracts.csv)
-* cleaned_dataset_stem.csv (pulizia + stemming di contracts.csv)
+La prima ci permette di entrare nelle pagine iniziali ed estrarre i link nei quali poi entreremo per copiare i codici
+dei contratti.  
+La seconda entra nei suddetti link, copia il codice dei contratti e lo inserisce in un file csv stivato nella cartella
+Deposito_contratti.
 
-Questi propongono i risultati dei file ***scraping.py*** e ***Topic_modeling.py***
+Sito sul quale verrà eseguito lo scraping:
+https://etherscan.io/contractsVerified  
+Questo ci permette di estrarre solo gli ultimi 500 contratti stipulati con Ethereum perciò, il file scraping.py verrà
+eseguito più volte fino all' ottenimento di un numero di campioni sufficienti per eseguire un' analisi di topic
+modeling.
 
 

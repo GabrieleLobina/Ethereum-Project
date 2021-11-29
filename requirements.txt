@@ -1,6 +1,3 @@
-numpy
 beautifulsoup4
 selenium
-pandas
-nltk
-matplotlib
+pyperclip
