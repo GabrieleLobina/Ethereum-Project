@@ -1,40 +1,51 @@
-# Web scraping #
+# README #
 
-### Obiettivi: ###
+In questo branch si attua la pulizia dei testi dei contratti estratti in
+Web-Scraping-e-Parsing e successivamente li si utilizza in 2 modelli di *topic modeling*.
 
-* Estrazione dei link contenenti i codici dei contratti dalla pagina https://etherscan.io/contractsVerified
-* Ingresso nei suddetti link ed estrazione del codice che compone i contratti
-* Inserimento del codice in un file csv
+>Per ottenere il file csv (aggiornato) generato nel branch Web-Scraping-e-Parsing è sufficiente scrivere nel terminale:  
+"git checkout origin/Web-Scraping-e-Parsing Deposito_contratti/contracts.csv"
 
-### Passi preliminari ###
+### Obiettivi ###
 
-* Scaricare le varie librerie presenti nel file *requirements.txt*
-* Per effettuare l' accesso alle varie pagine web verrà utilizzato ***selenium***, il quale necessita di determinati 
-  driver.  
-      Il programma è predisposto per l' utilizzo o di Chrome oppure di Safari:  
-  - Per Chrome = **ChromeDriver** (ottenibile al seguente link:
-    https://chromedriver.chromium.org/downloads)
-  - Per Safari = non necessita di alcun driver, se non del settaggio delle impostazioni del browser descritto al seguente
-    link:
-    https://www.browserstack.com/guide/run-selenium-tests-on-safari-using-safaridriver
-    
-* Per utilizzare Safari: commentare il codice alle righe 20 e 63 poi decommentare alle righe 21 e 64
+* *Pulizia contratti*
+  * eliminazione punteggiatura 
+  * eliminazione stop-words
+  * eliminazione sintassi Solidity
+  * eliminazione parole prive di significato 
+  * *Lemmatization* / *Stemming*
 
-#### N.B.: Accertarsi sempre di avere il driver compatibile con la versione del proprio browser 
+* *Topic modelling* 
+    * applicazione LDA
+    * applicazione NMF
+    * esposizione risultati
 
-### Descrizione programma ###
+L' esecuzione del programma, nel caso in cui non avvenisse tramite main.py, deve seguire il seguente ordine:
+prima Data_Cleaning.py e poi Topic_modeling.py
 
-Scraping.py contiene due classi: **Page** e **ObtainContracts**.
+### Data_Cleaning.py ###
 
-La prima ci permette di entrare nelle pagine iniziali ed estrarre i link nei quali poi entreremo per copiare i codici
-dei contratti.  
-La seconda entra nei suddetti link, copia il codice dei contratti e lo inserisce in un file csv stivato nella cartella
-Deposito_contratti.
+Questo file è composto dalla sola classe **DatasetPulito**
 
-Sito sul quale verrà eseguito lo scraping:
-https://etherscan.io/contractsVerified  
-Questo ci permette di estrarre solo gli ultimi 500 contratti stipulati con Ethereum perciò, il file scraping.py verrà
-eseguito più volte fino all' ottenimento di un numero di campioni sufficienti per eseguire un' analisi di topic
-modeling.
+Tramite questa apriamo il file *contracts.csv*, creato nel branch Web-Scraping-e-Parsing e inseriamo i contratti in 
+un set.  
+Attraverso le regex gestiamo la punteggiatura ed estraiamo le parole dai CamelCase. Distinguiamo la pulizia  
+per la *lemmatization* da quella per lo *stemming* ma in ogni caso, per entrambi i procedimenti escludiamo  
+le parole ritenute obsolete ai fini della futura ***Topic modeling***.  
+La classe genera due file csv, uno comprendente la pulizia con *lemmatization* e l' altro con *stemming*,   
+entrambi salvati all' interno della cartella Deposito_contratti.  
+I risultati possono essere osservati anche attraverso due dataset presenti negli attributi: ***lemma_dataset*** e ***stem_dataset***
 
 
+### Topic_modeling.py ###
+Questo file è composto dalla sola classe **TopicModeling**  
+
+Estraiamo i contratti appena ripuliti dal file che abbiamo selezionato (cleaned_dataset_lemma.csv oppure 
+cleaned_dataset_stem.csv) e salviamo i contratti in una lista.  
+Generiamo un *CountVectorizer* il quale ci servirà per attuare una cross-validation sul modello di LDA.  
+Identifichiamo i migliori parametri da passare ai modelli riguardanti numero di topics e poi, per
+la LDA anche i valori ottimali di *learning_decay* e *max_iter*.
+Tramite gensim generiamo una LDA e una NMF e stampiamo i risultati sia su terminale, tramite
+una rappresentazione delle prime 5 parole per importanza per topic, e a video tramite delle word-cloud.
+Per quanto riguarda il primo modello, il programma genera una rappresentazione grafica interattiva relativa ai topic
+individuati osservabile al sito salvato nella cartella *link_grafici*.

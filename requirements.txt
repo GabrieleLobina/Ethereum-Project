@@ -1,3 +1,7 @@
-beautifulsoup4
-selenium
-pyperclip
+pandas
+nltk
+matplotlib
+sklearn
+pyLDAvis
+gensim
+wordcloud
